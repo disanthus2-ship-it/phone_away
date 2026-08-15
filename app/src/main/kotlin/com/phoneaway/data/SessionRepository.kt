@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.time.LocalDate
@@ -31,6 +32,11 @@ class SessionRepository(
     private val json = Json { ignoreUnknownKeys = true; prettyPrint = false }
     private val writeLock = Mutex()
 
+    // Passed explicitly rather than relying on the reified `encodeToString`
+    // extension, which needs its own import and otherwise resolves to the
+    // two-argument overload.
+    private val historySerializer = ListSerializer(StoredSession.serializer())
+
     private val _sessions = MutableStateFlow<List<Session>>(emptyList())
     val sessions: StateFlow<List<Session>> = _sessions.asStateFlow()
 
@@ -44,7 +50,7 @@ class SessionRepository(
     private fun load(): List<Session> {
         if (!file.exists()) return emptyList()
         return runCatching {
-            json.decodeFromString<List<StoredSession>>(file.readText())
+            json.decodeFromString(historySerializer, file.readText())
                 .map(StoredSession::toSession)
                 .sortedByDescending { it.startedAt }
         }.getOrElse {
@@ -71,7 +77,7 @@ class SessionRepository(
     }
 
     private suspend fun persist(sessions: List<Session>) = withContext(Dispatchers.IO) {
-        val payload = json.encodeToString(sessions.map(StoredSession::from))
+        val payload = json.encodeToString(historySerializer, sessions.map(StoredSession::from))
         // Write to a temp file first so an interrupted write cannot truncate history.
         val temp = File(file.parentFile, "$FILE_NAME.tmp")
         temp.writeText(payload)
