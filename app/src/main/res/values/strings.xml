@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Phone Away</string>
+
+    <string name="channel_ongoing">Session in progress</string>
+    <string name="channel_ongoing_description">A silent, ongoing note while your phone is away.</string>
+    <string name="channel_result">Session results</string>
+    <string name="channel_result_description">Points earned when a session ends.</string>
+
+    <string name="notification_arming_title">Waiting for you to lock the phone</string>
+    <string name="notification_arming_text">The clock starts when the screen goes off.</string>
+    <string name="notification_running_title">Phone away · %1$s</string>
+    <string name="notification_running_text">%1$s away · %2$d points</string>
+    <string name="notification_running_text_target">%1$s away · %2$s left · %3$d points</string>
+
+    <string name="action_end_session">End session</string>
+
+    <string name="result_title_completed">Session complete</string>
+    <string name="result_title_broken">Session broken</string>
+    <string name="result_title_abandoned">Session ended early</string>
+    <string name="result_text">%1$s away · +%2$d points</string>
+</resources>

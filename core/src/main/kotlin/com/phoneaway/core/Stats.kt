@@ -7,6 +7,8 @@ data class Stats(
     val totalPoints: Int,
     val level: LevelState,
     val currentStreak: Int,
+    /** The streak a session started right now would be scored at. */
+    val streakForScoring: Int,
     val longestStreak: Int,
     val totalSessions: Int,
     val completedSessions: Int,
@@ -35,6 +37,7 @@ object StatsCalculator {
             totalPoints = totalPoints,
             level = LevelSystem.stateFor(totalPoints),
             currentStreak = StreakCalculator.currentStreak(dates, today),
+            streakForScoring = StreakCalculator.streakForScoring(dates, today),
             longestStreak = StreakCalculator.longestStreak(dates),
             totalSessions = sessions.size,
             completedSessions = sessions.count { it.outcome == SessionOutcome.COMPLETED },
